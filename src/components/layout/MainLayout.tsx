@@ -1,8 +1,9 @@
 import { Layout, Menu, MenuProps } from "antd";
 import { Outlet } from "react-router-dom";
+import { adminSidebarItems } from "../../routes/admin.routes";
 const { Header, Content, Footer, Sider } = Layout;
 
-const items: MenuProps["items"] = [
+const adminPaths: MenuProps["items"] = [
   {
     key: "1",
     label: "name",
@@ -51,7 +52,7 @@ export const MainLayout = () => {
           theme="dark"
           mode="inline"
           defaultSelectedKeys={["4"]}
-          items={items}
+          items={adminSidebarItems}
         />
       </Sider>
       <Layout>
