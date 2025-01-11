@@ -1,28 +1,7 @@
-import { Layout, Menu, MenuProps } from "antd";
+import { Layout, Menu } from "antd";
 import { Outlet } from "react-router-dom";
 import { adminSidebarItems } from "../../routes/admin.routes";
 const { Header, Content, Footer, Sider } = Layout;
-
-const adminPaths: MenuProps["items"] = [
-  {
-    key: "1",
-    label: "name",
-  },
-  {
-    key: "2",
-    label: "name",
-    children: [
-      {
-        key: "11",
-        label: "name",
-      },
-      {
-        key: "21",
-        label: "name",
-      },
-    ],
-  },
-];
 
 export const MainLayout = () => {
   return (
