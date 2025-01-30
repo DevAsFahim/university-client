@@ -2,40 +2,46 @@ import { Button, Col, Flex } from "antd";
 import PHForm from "../../../components/form/PHForm";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 import PHSelect from "../../../components/form/PHSelect";
-import { semesterStatusOptions } from "../../../constants/semester";
 import { toast } from "sonner";
 import { TResponse } from "../../../types/global";
-import { useGetAllSemestersQuery } from "../../../redux/features/admin/academicManagement.api";
-import PHDatePicker from "../../../components/form/PHDatePicker";
 import PHInput from "../../../components/form/PHInput";
-import { useAddRegisteredSemesterMutation } from "../../../redux/features/admin/courseManagement.api";
+import {
+  useAddCourseMutation,
+  useGetAllCoursesQuery,
+} from "../../../redux/features/admin/courseManagement.api";
 
 const CreateCourse = () => {
-  const [addSemester] = useAddRegisteredSemesterMutation();
-  const { data: academicSemester } = useGetAllSemestersQuery([
-    { name: "sort", value: "year" },
-  ]);
+  const [createCourse] = useAddCourseMutation();
+  const { data: courses } = useGetAllCoursesQuery(undefined);
 
-  const academicSemesterOptions = academicSemester?.data?.map((item) => ({
+  const preRequisiteCoursesOptions = courses?.data?.map((item) => ({
     value: item._id,
-    label: `${item.name} ${item.year}`,
+    label: item.title,
   }));
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     const toastId = toast.loading("Creating...");
 
-    const semesterData = {
+    const courseData = {
       ...data,
-      minCredit: Number(data.minCredit),
-      maxCredit: Number(data.maxCredit),
+      code: Number(data.code),
+      credits: Number(data.credits),
+      isDeleted: false,
+      preRequisiteCourses: data?.preRequisiteCourses
+        ? data?.preRequisiteCourses?.map((item) => ({
+            course: item,
+            isDeleted: false,
+          }))
+        : [],
     };
-    console.log(semesterData);
+    console.log(courseData);
     try {
-      const res = (await addSemester(semesterData)) as TResponse<any>;
+      const res = (await createCourse(courseData)) as TResponse<any>;
       if (res.error) {
         toast.error(res.error.data.message, { id: toastId });
+        console.log(res.error);
       } else {
-        toast.success("Semester created", { id: toastId });
+        toast.success("Course created", { id: toastId });
       }
     } catch (err) {
       toast.error("Something went wrong", { id: toastId });
@@ -49,8 +55,14 @@ const CreateCourse = () => {
         <PHForm onSubmit={onSubmit}>
           <PHInput type="text" name="title" label="Title" />
           <PHInput type="text" name="prefix" label="Prefix" />
-          <PHInput type="text" name="code" label="Code" />
-          <PHInput type="text" name="credits" label="Credits" />
+          <PHInput type="number" name="code" label="Code" />
+          <PHInput type="number" name="credits" label="Credits" />
+          <PHSelect
+            mode="multiple"
+            options={preRequisiteCoursesOptions}
+            name="preRequisiteCourses"
+            label="Pre Requisite Courses"
+          />
 
           <Button htmlType="submit">Submit</Button>
         </PHForm>
