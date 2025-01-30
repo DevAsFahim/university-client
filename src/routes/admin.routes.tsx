@@ -5,10 +5,17 @@ import CreateAcademicDepartment from "../pages/admin/academicManagement/CreateAc
 import CreateAcademicFaculty from "../pages/admin/academicManagement/CreateAcademicFaculty";
 import CreateAcademicSemester from "../pages/admin/academicManagement/CreateAcademicSemester";
 import AdminDashboard from "../pages/admin/AdminDashboard";
+import Courses from "../pages/admin/courseManagement/Courses";
+import CreateCourse from "../pages/admin/courseManagement/CreateCourse";
+import OfferedCourse from "../pages/admin/courseManagement/OfferedCourse";
+import OfferedCourses from "../pages/admin/courseManagement/OfferedCourses";
+import RegisteredSemesters from "../pages/admin/courseManagement/RegisteredSemesters";
+import SemesterRegistration from "../pages/admin/courseManagement/SemesterRegistration";
 import CreateAdmin from "../pages/admin/userManagement/CreateAdmin";
 import CreateFaculty from "../pages/admin/userManagement/CreateFaculty";
 import CreateStudent from "../pages/admin/userManagement/CreateStudent";
 import StudentData from "../pages/admin/userManagement/StudentData";
+import StudentDetails from "../pages/admin/userManagement/StudentDetails";
 
 export const adminPaths = [
   {
@@ -65,6 +72,10 @@ export const adminPaths = [
         element: <StudentData />,
       },
       {
+        path: "student-data/:studentId",
+        element: <StudentDetails />,
+      },
+      {
         name: "Create Admin",
         path: "create-admin",
         element: <CreateAdmin />,
@@ -73,6 +84,41 @@ export const adminPaths = [
         name: "Create Faculty",
         path: "create-faculty",
         element: <CreateFaculty />,
+      },
+    ],
+  },
+  {
+    name: "Course Management",
+    children: [
+      {
+        name: "Semester Registration",
+        path: "semester-registration",
+        element: <SemesterRegistration />,
+      },
+      {
+        name: "Registered Semesters",
+        path: "registered-semesters",
+        element: <RegisteredSemesters />,
+      },
+      {
+        name: "Create Course",
+        path: "create-course",
+        element: <CreateCourse />,
+      },
+      {
+        name: "Courses",
+        path: "courses",
+        element: <Courses />,
+      },
+      {
+        name: "Offer Course",
+        path: "offer-course",
+        element: <OfferedCourse />,
+      },
+      {
+        name: "Offered Courses",
+        path: "offered-courses",
+        element: <OfferedCourses />,
       },
     ],
   },
@@ -98,7 +144,7 @@ export const adminPaths = [
 //   return acc;
 // }, []);
 
-// export const adminSidebarItems = adminPaths.reduce((acc: ISidebarItem[], item) => {
+// export const adminSidebarItems = adminPaths.reduce((acc: TSidebarItem[], item) => {
 //   if (item.path && item.name) {
 //     acc.push({
 //       key: item.name,

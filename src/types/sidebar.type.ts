@@ -1,10 +1,12 @@
 import { ReactNode } from "react";
 
-export interface ISidebarItem {
-  key: string;
-  label: ReactNode;
-  children?: ISidebarItem[];
-}
+export type TSidebarItem =
+  | {
+      key: string;
+      label: ReactNode;
+      children?: TSidebarItem[];
+    }
+  | undefined;
 
 export interface IRoute {
   path: string;

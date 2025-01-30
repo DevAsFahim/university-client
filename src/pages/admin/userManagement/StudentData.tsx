@@ -1,86 +1,82 @@
-import { Button, Table, TableColumnsType, TableProps } from "antd";
-import { useGetAllSemestersQuery } from "../../../redux/features/admin/academicManagement.api";
-import { TAcademicSemester } from "../../../types/academicManagement.type";
+import {
+  Button,
+  Pagination,
+  Space,
+  Table,
+  TableColumnsType,
+  TableProps,
+} from "antd";
 import { useState } from "react";
-import { TQueryParam } from "../../../types";
+import { TQueryParam, TStudent } from "../../../types";
+import { useGetAllStudentsQuery } from "../../../redux/features/admin/userManagement.api";
+import { Link } from "react-router-dom";
 
 export type TTableData = Pick<
-  TAcademicSemester,
-  "name" | "year" | "startMonth" | "endMonth"
+  TStudent,
+  "fullName" | "id" | "email" | "contactNo"
 >;
 
 const StudentData = () => {
-  const [params, setParams] = useState<TQueryParam[] | undefined>(undefined);
+  const [params, setParams] = useState<TQueryParam[]>([]);
+  const [page, setPage] = useState(1);
   const {
-    data: semesterData,
+    data: studentData,
     isLoading,
     isFetching,
-  } = useGetAllSemestersQuery(params);
+  } = useGetAllStudentsQuery([
+    { name: "page", value: page },
+    { name: "sort", value: "id" },
+    ...params,
+  ]);
 
-  const tableData = semesterData?.data?.map(
-    ({ _id, name, startMonth, endMonth, year }) => ({
+  const metaData = studentData?.meta;
+
+  const tableData = studentData?.data?.map(
+    ({ _id, fullName, id, email, contactNo }) => ({
       key: _id,
-      name,
-      startMonth,
-      endMonth,
-      year,
+      fullName,
+      id,
+      email,
+      contactNo,
     })
   );
 
   const columns: TableColumnsType<TTableData> = [
     {
       title: "Name",
-      dataIndex: "name",
+      dataIndex: "fullName",
       showSorterTooltip: { target: "full-header" },
-      filters: [
-        {
-          text: "Autumn",
-          value: "Autumn",
-        },
-        {
-          text: "Summer",
-          value: "Summer",
-        },
-        {
-          text: "Fall",
-          value: "Fall",
-        },
-      ],
     },
     {
-      title: "Year",
-      dataIndex: "year",
-      filters: [
-        {
-          text: "2025",
-          value: "2025",
-        },
-        {
-          text: "2026",
-          value: "2026",
-        },
-        {
-          text: "2029",
-          value: "2029",
-        },
-      ],
+      title: "Roll No.",
+      key: "id",
+      dataIndex: "id",
     },
     {
-      title: "Start Month",
-      dataIndex: "startMonth",
+      title: "Email",
+      key: "email",
+      dataIndex: "email",
     },
     {
-      title: "End Month",
-      dataIndex: "endMonth",
+      title: "Contact No.",
+      key: "contactNo",
+      dataIndex: "contactNo",
     },
     {
-      title: 'Action',
-      render: () => {
+      title: "Action",
+      render: (item) => {
         return (
-          <div><Button>Update</Button></div>
-        )
-      }
-    }
+          <Space>
+            <Link to={`/admin/student-data/${item.key}`}>
+              <Button>Details</Button>
+            </Link>
+            <Button>Update</Button>
+            <Button>Block</Button>
+          </Space>
+        );
+      },
+      width: "1%",
+    },
   ];
 
   const onChange: TableProps<TTableData>["onChange"] = (
@@ -107,13 +103,22 @@ const StudentData = () => {
   }
 
   return (
-    <Table<TTableData>
-      loading={isFetching}
-      columns={columns}
-      dataSource={tableData}
-      onChange={onChange}
-      showSorterTooltip={{ target: "sorter-icon" }}
-    />
+    <>
+      <Table<TTableData>
+        loading={isFetching}
+        columns={columns}
+        dataSource={tableData}
+        onChange={onChange}
+        showSorterTooltip={{ target: "sorter-icon" }}
+        pagination={false}
+      />
+      <Pagination
+        current={page}
+        onChange={(value) => setPage(value)}
+        pageSize={metaData?.limit}
+        total={metaData?.total}
+      />
+    </>
   );
 };
 
