@@ -1,4 +1,9 @@
-import { TQueryParam, TResponseRedux, TSemester } from "../../../types";
+import {
+  TCourse,
+  TQueryParam,
+  TResponseRedux,
+  TSemester,
+} from "../../../types";
 import { baseApi } from "../../api/baseApi";
 
 const courseManagement = baseApi.injectEndpoints({
@@ -59,17 +64,24 @@ const courseManagement = baseApi.injectEndpoints({
         };
       },
       providesTags: ["courses"],
-      transformResponse: (response: TResponseRedux<any>) => ({
+      transformResponse: (response: TResponseRedux<TCourse[]>) => ({
         data: response.data,
         meta: response.meta,
       }),
     }),
-
     addCourse: builder.mutation({
       query: (data) => ({
         url: "/courses/create-course",
         method: "POST",
         body: data,
+      }),
+      invalidatesTags: ["courses"],
+    }),
+    addFaculties: builder.mutation({
+      query: (args) => ({
+        url: `/courses/${args.courseId}/assign-faculties`,
+        method: "PUT",
+        body: args.data,
       }),
       invalidatesTags: ["courses"],
     }),
@@ -82,4 +94,5 @@ export const {
   useUpdateRegisteredSemesterMutation,
   useGetAllCoursesQuery,
   useAddCourseMutation,
+  useAddFacultiesMutation,
 } = courseManagement;
