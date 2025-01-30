@@ -1,7 +1,29 @@
+import { TQueryParam, TResponseRedux, TSemester } from "../../../types";
 import { baseApi } from "../../api/baseApi";
 
 const courseManagement = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    getRegisteredSemesters: builder.query({
+      query: (args) => {
+        const params = new URLSearchParams();
+
+        if (args) {
+          args.forEach((item: TQueryParam) => {
+            params.append(item.name, item.value as string);
+          });
+        }
+
+        return {
+          url: "/semester-registrations",
+          method: "GET",
+          params: params,
+        };
+      },
+      transformResponse: (response: TResponseRedux<TSemester>) => ({
+        data: response.data,
+        meta: response.meta,
+      }),
+    }),
     addRegisteredSemester: builder.mutation({
       query: (data) => ({
         url: "/semester-registrations/create-semester-registration",
